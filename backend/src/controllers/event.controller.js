@@ -1,3 +1,4 @@
+// backend/src/controllers/event.controller.js
 import { EventPostDTO, EventPutDTO } from "../dto/event.dto.js";
 import { ResponseModel } from "../models/response.model.js";
 import { EventService } from "../services/event.service.js";
@@ -104,8 +105,12 @@ export class EventController {
             if (!RequestValidator.hasSchema(eventData, EventPutDTO))
                 throw new Error(`Request body have empty properties or hasn't specified schema: ${Object.keys(new EventPutDTO())}`)
 
-            responseModel.data = await EventService.updateEvent(id, eventData)
+            const updatedEvent = await EventService.updateEvent(id, eventData)
+            responseModel.data = updatedEvent
             responseModel.response = true
+
+            // Emitir evento de edición de evento
+            eventEmitter.emit('eventUpdated', updatedEvent)
         } catch (error) {
             responseModel.error = error.message
         } finally {

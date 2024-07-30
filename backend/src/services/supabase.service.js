@@ -2,6 +2,14 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseKey = process.env.SUPABASE_KEY
 
+console.log('SUPABASE_URL:', supabaseUrl);
+console.log('SUPABASE_KEY:', supabaseKey);
+
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('SUPABASE_URL and SUPABASE_KEY must be provided');
+}
+
+
 export class SupabaseService {
     static #supabase = createClient(supabaseUrl, supabaseKey)
 
@@ -9,11 +17,7 @@ export class SupabaseService {
         return this.#supabase
     }
 
-    /**
-     * 
-     * @param {string} table 
-     * @param {Map<column, value> | [Map<column, value>]} rows 
-     */
+ 
     static async upload(table, rows) {
         const { data, error } = await this.#supabase
             .from(table)
